@@ -1,8 +1,4 @@
-io\github\lorisdemicheli\minecraft_orm\hibernate\HibernateUtil.class
-io\github\lorisdemicheli\minecraft_orm\hibernate\TransactionalInvocationHandler.class
-io\github\lorisdemicheli\minecraft_orm\hibernate\TransactionalInvocationHandler$1.class
-io\github\lorisdemicheli\minecraft_orm\hibernate\TransactionException.class
-io\github\lorisdemicheli\minecraft_orm\hibernate\TransactionalInvocationHandler$2.class
-io\github\lorisdemicheli\minecraft_orm\hibernate\TransactionalManager.class
+io\github\lorisdemicheli\minecraft_orm\hibernate\PersistentUnitTester.class
 io\github\lorisdemicheli\minecraft_orm\bean\BeanStore.class
-io\github\lorisdemicheli\minecraft_orm\bean\Wire.class
+io\github\lorisdemicheli\minecraft_orm\hibernate\PersistentUnit.class
+io\github\lorisdemicheli\minecraft_orm\hibernate\PersistenceInjectBean.class

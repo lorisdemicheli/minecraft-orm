@@ -1,9 +1,7 @@
-package io.github.lorisdemicheli.minecraft_orm.bean;
+package io.github.lorisdemicheli.minecraft_orm.hibernate;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.persist.jpa.JpaPersistModule;
-
-import io.github.lorisdemicheli.minecraft_orm.hibernate.PersistentUnit;
 
 public class PersistenceInjectBean extends AbstractModule {
 	

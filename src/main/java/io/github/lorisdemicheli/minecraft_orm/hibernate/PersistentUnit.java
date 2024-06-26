@@ -17,8 +17,7 @@ public class PersistentUnit {
 
 	public Map<String, String> generateProperties() {
 		Map<String, String> properties = new HashMap<>();
-		properties.put("javax.persistence.jdbc.url",
-				String.format("jdbc:%s://%s:%d/%s", databaseType, url, port, database));
+		properties.put("javax.persistence.jdbc.url", String.format("jdbc:%s://%s:%d/%s", databaseType, url, port, database));
 		properties.put("javax.persistence.jdbc.user", user);
 		properties.put("javax.persistence.jdbc.password", password);
 		properties.put("javax.persistence.jdbc.driver", driver);

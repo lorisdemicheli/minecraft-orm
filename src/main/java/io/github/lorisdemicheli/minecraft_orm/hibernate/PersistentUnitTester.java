@@ -1,4 +1,4 @@
-package io.github.lorisdemicheli.minecraft_orm.bean;
+package io.github.lorisdemicheli.minecraft_orm.hibernate;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;

@@ -18,7 +18,9 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import io.github.lorisdemicheli.minecraft_orm.hibernate.PersistenceInjectBean;
 import io.github.lorisdemicheli.minecraft_orm.hibernate.PersistentUnit;
+import io.github.lorisdemicheli.minecraft_orm.hibernate.PersistentUnitTester;
 
 public class BeanStore {
 
@@ -79,7 +81,7 @@ public class BeanStore {
 				configPlugin.createNewFile();
 				yaml.dump(new PersistentUnit(), new FileWriter(configPlugin));
 			} catch (IOException e) {
-				plugin.getLogger().warning(String.format("unable to write default file %s",FILENAME_DBCONFIG_YML));
+				plugin.getLogger().warning(String.format("unable to write dbconfig default file %s",FILENAME_DBCONFIG_YML));
 			}
 		}
 		return yaml.load(new FileInputStream(configPlugin));
