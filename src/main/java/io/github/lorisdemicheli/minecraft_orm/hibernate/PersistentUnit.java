@@ -1,10 +1,13 @@
 package io.github.lorisdemicheli.minecraft_orm.hibernate;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PersistentUnit {
+public class PersistentUnit implements Serializable {
 
+	private static final long serialVersionUID = -2509458984724931759L;
+	
 	private String url = "localhost";
 	private int port = 3306;
 	private String database = "minecraft";
