@@ -1,14 +1,22 @@
 package io.github.lorisdemicheli.minecraft_orm.hibernate;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManagerFactory;
+import javax.annotation.Nullable;
+
+import com.google.inject.Inject;
+import com.google.inject.persist.Transactional;
+
+import io.github.lorisdemicheli.minecraft_orm.Test;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+
 
 public class PersistentUnitTester {
 
 	@Inject
-	private EntityManagerFactory entityManagerFactory;
+	private EntityManager entityManager;
 
-	public boolean isConnectionActive() {
-		return entityManagerFactory.createEntityManager() != null;
+	@Transactional
+	public void saveOrUpdate(Test t) {
+		entityManager.persist(t);
 	}
 }

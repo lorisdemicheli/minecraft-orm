@@ -10,22 +10,26 @@ public class PersistentUnit implements Serializable {
 	
 	private String url = "localhost";
 	private int port = 3306;
-	private String database = "minecraft";
-	private transient String databaseType = "mysql";
+	private String database = "test";
+	private String databaseType = "mariadb";
 	private String user = "root";
 	private String password = "root";
-	private transient String driver = "com.mysql.cj.jdbc.Driver";
-	private transient String dialect = "org.hibernate.dialect.MySQLDialect";
+	private transient String driver = "org.mariadb.jdbc.Driver";
+	private transient String dialect = "org.hibernate.dialect.MariaDBDialect";
 	private transient String databaseGeneration = "update";
+	
+	//TODO usere Database.MARIADB.
 
 	public Map<String, String> generateProperties() {
 		Map<String, String> properties = new HashMap<>();
-		properties.put("javax.persistence.jdbc.url", String.format("jdbc:%s://%s:%d/%s", databaseType, url, port, database));
-		properties.put("javax.persistence.jdbc.user", user);
-		properties.put("javax.persistence.jdbc.password", password);
-		properties.put("javax.persistence.jdbc.driver", driver);
+		properties.put("jakarta.persistence.jdbc.url", String.format("jdbc:%s://%s:%d/%s", databaseType, url, port, database));
+		properties.put("jakarta.persistence.jdbc.user", user);
+		properties.put("jakarta.persistence.jdbc.password", password);
+		properties.put("jakarta.persistence.jdbc.driver", driver);
 		properties.put("hibernate.dialect", dialect);
 		properties.put("hibernate.hbm2ddl.auto", databaseGeneration);
+		properties.put("hibernate.connection.autocommit", "true");
+		properties.put("hibernate.show_sql", "true");
 		return properties;
 	}
 

@@ -1,4 +1,12 @@
-io\github\lorisdemicheli\minecraft_orm\hibernate\PersistentUnitTester.class
-io\github\lorisdemicheli\minecraft_orm\bean\BeanStore.class
 io\github\lorisdemicheli\minecraft_orm\hibernate\PersistentUnit.class
+io\github\lorisdemicheli\minecraft_orm\Test.class
+io\github\lorisdemicheli\minecraft_orm\hibernate\CustomHibernatePeristenceProvider$1.class
+io\github\lorisdemicheli\minecraft_orm\hibernate\PersistenceInjectBean$JpaInitializer.class
 io\github\lorisdemicheli\minecraft_orm\hibernate\PersistenceInjectBean.class
+io\github\lorisdemicheli\minecraft_orm\hibernate\CustomHibernatePeristenceProvider.class
+io\github\lorisdemicheli\minecraft_orm\hibernate\PersistentUnitTester.class
+io\github\lorisdemicheli\minecraft_orm\server\PluginUtil.class
+io\github\lorisdemicheli\minecraft_orm\hibernate\MinecraftHibernatePeristenceProvider$1.class
+io\github\lorisdemicheli\minecraft_orm\bean\BeanStore.class
+io\github\lorisdemicheli\minecraft_orm\hibernate\MinecraftHibernatePeristenceProvider.class
+io\github\lorisdemicheli\minecraft_orm\hibernate\HibernatePersistenceProviderResolver.class

@@ -1,42 +1,51 @@
 package io.github.lorisdemicheli.minecraft_orm.bean;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.io.UncheckedIOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Properties;
+import java.util.logging.Level;
 import java.util.stream.Stream;
 
+import javax.sql.DataSource;
+
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.file.YamlConstructor;
 import org.bukkit.configuration.file.YamlRepresenter;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPluginLoader;
+import org.hibernate.cfg.AvailableSettings;
+import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.hibernate.service.spi.ServiceException;
 import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.DumperOptions.ScalarStyle;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Tag;
-import org.yaml.snakeyaml.representer.Representer;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import io.github.lorisdemicheli.minecraft_orm.Test;
 import io.github.lorisdemicheli.minecraft_orm.hibernate.PersistenceInjectBean;
 import io.github.lorisdemicheli.minecraft_orm.hibernate.PersistentUnit;
 import io.github.lorisdemicheli.minecraft_orm.hibernate.PersistentUnitTester;
+import io.github.lorisdemicheli.minecraft_orm.server.PluginUtil;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.SharedCacheMode;
+import jakarta.persistence.ValidationMode;
+import jakarta.persistence.spi.ClassTransformer;
+import jakarta.persistence.spi.PersistenceUnitInfo;
+import jakarta.persistence.spi.PersistenceUnitTransactionType;
 
 public class BeanStore {
 
@@ -81,23 +90,24 @@ public class BeanStore {
 	private static void generateInjectorIfNull() {
 		if (injector == null) {
 			try {
-				Injector tmpInjector = Guice.createInjector(new PersistenceInjectBean(getPersistentUnit()));
-				PersistentUnitTester tester = tmpInjector.getInstance(PersistentUnitTester.class);
-				if (!tester.isConnectionActive()) {
-					Plugin plugin = getCurrentPlugin();
-					plugin.getLogger().warning("Connection to database failed, stopping plugin");
-					Bukkit.getPluginManager().disablePlugin(plugin);
-				} else {
-					injector = tmpInjector;
-				}
-			} catch (IllegalArgumentException | SecurityException | FileNotFoundException e) {
-				throw new RuntimeException(e);
+				injector = Guice.createInjector(new PersistenceInjectBean(getPersistentUnit()));
+			} catch (Exception e) {
+				Plugin plugin = PluginUtil.getCurrentPlugin();
+				plugin.getLogger().log(Level.SEVERE,"Connection to database failed, stopping plugin",e);
+				Bukkit.getPluginManager().disablePlugin(plugin);
 			}
 		}
 	}
+	
+//	public static void main(String[] args) {
+//		Injector tmpInjector = Guice.createInjector(new PersistenceInjectBean(new PersistentUnit()));
+//		PersistentUnitTester tester = tmpInjector.getInstance(PersistentUnitTester.class);
+//		tester.saveOrUpdate(new Test("234"));
+//		System.out.println("UE");
+//	}
 
 	private static PersistentUnit getPersistentUnit() throws FileNotFoundException {
-		Plugin plugin = getCurrentPlugin();
+		Plugin plugin = PluginUtil.getCurrentPlugin();
 		File configPlugin = new File(plugin.getDataFolder(), FILENAME_DBCONFIG_YML);
 		DumperOptions yamlDumperOptions = new DumperOptions();
         yamlDumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
@@ -122,17 +132,6 @@ public class BeanStore {
 		return yaml.load(new FileInputStream(configPlugin));
 	}	
 
-	private static Plugin getCurrentPlugin() {
-		return Bukkit.getPluginManager().getPlugin(pluginName());
-	}
-
-	private static String pluginName() {
-		InputStream input =  findRealClass().getResourceAsStream("/" + FILENAME_PLUGIN_YML);
-		Yaml yaml = new Yaml();
-		Map<String, Object> parsedYaml = yaml.load(input);
-		return (String) parsedYaml.get("name");
-	}
-
 	private static String getBeanName(Class<?> classBean, String beanName) {
 		if (beanName == null) {
 			beanName = classBean.getSimpleName();
@@ -141,26 +140,27 @@ public class BeanStore {
 	}
 
 	//TODO trovare modo migliore, così non va benissimo
-	private static Class<?> findRealClass() {
-		List<StackTraceElement> stackTrace = Arrays.asList(Thread.currentThread().getStackTrace());
-		try {
-			StackTraceElement element = stackTrace.stream()
-					.filter(e -> excludeStart.stream().noneMatch(c -> e.getClassName().startsWith(c))).findFirst()
-					.get();
-			ClassLoader classLoader = Stream.of(Bukkit.getPluginManager().getPlugins())
-					.map(p->p.getClass().getClassLoader())
-					.filter(cl -> {
-						try {
-							cl.loadClass(element.getClassName());
-							return true;
-						} catch (ClassNotFoundException e) {
-							return false;
-						}
-					})
-					.findFirst().get();
-			return classLoader.loadClass(element.getClassName());
-		} catch (ClassNotFoundException e) {
-			return null;
-		}
-	}
+//	private static Class<?> findRealClass() {
+//		List<StackTraceElement> stackTrace = Arrays.asList(Thread.currentThread().getStackTrace());
+//		try {
+//			StackTraceElement element = stackTrace.stream()
+//					.filter(e -> excludeStart.stream().noneMatch(c -> e.getClassName().startsWith(c))).findFirst()
+//					.get();
+//			ClassLoader classLoader = Stream.of(Bukkit.getPluginManager().getPlugins())
+//					.map(p->p.getClass().getClassLoader())
+//					.filter(cl -> {
+//						try {
+//							cl.loadClass(element.getClassName());
+//							return true;
+//						} catch (ClassNotFoundException e) {
+//							return false;
+//						}
+//					})
+//					.findFirst().get();
+//			return classLoader.loadClass(element.getClassName());
+//		} catch (ClassNotFoundException e) {
+//			return null;
+//		}
+//	}
+	
 }
