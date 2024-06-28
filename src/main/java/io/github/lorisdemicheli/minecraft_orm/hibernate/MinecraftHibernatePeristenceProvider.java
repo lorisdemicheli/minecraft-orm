@@ -3,7 +3,6 @@ package io.github.lorisdemicheli.minecraft_orm.hibernate;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -13,10 +12,9 @@ import javax.sql.DataSource;
 
 import org.bukkit.plugin.Plugin;
 import org.hibernate.jpa.HibernatePersistenceProvider;
-import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
-import org.reflections.util.ConfigurationBuilder;
 
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 import io.github.lorisdemicheli.minecraft_orm.server.PluginUtil;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManagerFactory;
@@ -34,12 +32,10 @@ public class MinecraftHibernatePeristenceProvider extends HibernatePersistencePr
 	}
 
 	private static PersistenceUnitInfo archiverPersistenceUnitInfo(String persistenceUnitName,Plugin plugin) {
-        Reflections reflections = new Reflections(new ConfigurationBuilder()
-                .addClassLoaders(plugin.getClass().getClassLoader()));
-		List<String> entitys = new ArrayList<>();//reflections.getTypesAnnotatedWith(Entity.class).stream().map(c->c.getCanonicalName()).toList();
-		System.out.println("ENTITY");
-		System.out.println(entitys);
-		entitys.add("io.github.lorisdemicheli.frinds_ui.friends.entity.Player");
+		ClassLoader cl = plugin.getClass().getClassLoader();
+		
+		List<String> entitys = findEntityClasses(cl);
+
 		return new PersistenceUnitInfo() {
 			@Override
 			public String getPersistenceUnitName() {
@@ -131,4 +127,17 @@ public class MinecraftHibernatePeristenceProvider extends HibernatePersistencePr
 			}
 		};
 	}
+	
+	private static List<String> findEntityClasses(ClassLoader cl) {
+        try (ScanResult scanResult = new ClassGraph()
+                .addClassLoader(cl)
+                .enableClassInfo()
+                .enableAnnotationInfo()
+                .scan()) {
+
+            return scanResult.getClassesWithAnnotation(Entity.class.getName()).stream()
+            		.map(classInfo -> classInfo.getName())
+            		.toList();
+        }
+    }
 }

@@ -5,27 +5,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.logging.Level;
-import java.util.stream.Stream;
-
-import javax.sql.DataSource;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlRepresenter;
 import org.bukkit.plugin.Plugin;
-import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.jpa.HibernatePersistenceProvider;
-import org.hibernate.service.spi.ServiceException;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -35,35 +21,16 @@ import org.yaml.snakeyaml.nodes.Tag;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import io.github.lorisdemicheli.minecraft_orm.Test;
 import io.github.lorisdemicheli.minecraft_orm.hibernate.PersistenceInjectBean;
 import io.github.lorisdemicheli.minecraft_orm.hibernate.PersistentUnit;
-import io.github.lorisdemicheli.minecraft_orm.hibernate.PersistentUnitTester;
 import io.github.lorisdemicheli.minecraft_orm.server.PluginUtil;
-import jakarta.persistence.Persistence;
-import jakarta.persistence.SharedCacheMode;
-import jakarta.persistence.ValidationMode;
-import jakarta.persistence.spi.ClassTransformer;
-import jakarta.persistence.spi.PersistenceUnitInfo;
-import jakarta.persistence.spi.PersistenceUnitTransactionType;
 
 public class BeanStore {
 
 	private static final Map<String, Object> beans = new HashMap<>();
 	private static Injector injector;
 
-	private static final String FILENAME_PLUGIN_YML = "plugin.yml";
 	private static final String FILENAME_DBCONFIG_YML = "dbconfig.yml";
-
-	private static final List<String> excludeStart;
-
-	static {
-		excludeStart = new ArrayList<String>();
-		excludeStart.add("io.github.lorisdemicheli.minecraft_orm");
-		excludeStart.add("java");
-		excludeStart.add("net.minecraft");
-		excludeStart.add("org.bukkit");
-	}
 
 	public static <T> T getOrCreateBean(Class<T> classBean) {
 		return getOrCreateBean(classBean, null);

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hibernate.dialect.Database;
+
 public class PersistentUnit implements Serializable {
 
 	private static final long serialVersionUID = -2509458984724931759L;
@@ -18,9 +20,10 @@ public class PersistentUnit implements Serializable {
 	private transient String dialect = "org.hibernate.dialect.MariaDBDialect";
 	private transient String databaseGeneration = "update";
 	
-	//TODO usere Database.MARIADB.
+	//TODO usere Database.MARIADB.latestDialect():
 
 	public Map<String, String> generateProperties() {
+		
 		Map<String, String> properties = new HashMap<>();
 		properties.put("jakarta.persistence.jdbc.url", String.format("jdbc:%s://%s:%d/%s", databaseType, url, port, database));
 		properties.put("jakarta.persistence.jdbc.user", user);

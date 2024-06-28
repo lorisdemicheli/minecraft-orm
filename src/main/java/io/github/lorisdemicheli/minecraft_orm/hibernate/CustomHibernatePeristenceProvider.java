@@ -14,9 +14,6 @@ import javax.sql.DataSource;
 
 import org.bukkit.plugin.Plugin;
 import org.hibernate.jpa.HibernatePersistenceProvider;
-import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
-import org.reflections.util.ConfigurationBuilder;
 
 import io.github.lorisdemicheli.minecraft_orm.server.PluginUtil;
 import jakarta.persistence.Entity;
