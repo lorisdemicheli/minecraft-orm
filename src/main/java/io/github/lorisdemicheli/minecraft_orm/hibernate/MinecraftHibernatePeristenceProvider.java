@@ -15,7 +15,6 @@ import org.hibernate.jpa.HibernatePersistenceProvider;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
-import io.github.lorisdemicheli.minecraft_orm.server.PluginUtil;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.SharedCacheMode;
@@ -26,9 +25,15 @@ import jakarta.persistence.spi.PersistenceUnitTransactionType;
 
 public class MinecraftHibernatePeristenceProvider extends HibernatePersistenceProvider {
 
+	private Plugin plugin;
+	
+	public MinecraftHibernatePeristenceProvider(Plugin plugin) {
+		this.plugin = plugin;
+	}
+
 	@Override
 	public EntityManagerFactory createEntityManagerFactory(String persistenceUnitName, Map properties) {
-		return createContainerEntityManagerFactory(archiverPersistenceUnitInfo(persistenceUnitName,PluginUtil.getCurrentPlugin()), properties);
+		return createContainerEntityManagerFactory(archiverPersistenceUnitInfo(persistenceUnitName,plugin), properties);
 	}
 
 	private static PersistenceUnitInfo archiverPersistenceUnitInfo(String persistenceUnitName,Plugin plugin) {
@@ -88,17 +93,17 @@ public class MinecraftHibernatePeristenceProvider extends HibernatePersistencePr
 
 			@Override
 			public boolean excludeUnlistedClasses() {
-				return false;
+				return true;
 			}
 
 			@Override
 			public SharedCacheMode getSharedCacheMode() {
-				return null;
+				return SharedCacheMode.ALL;
 			}
 
 			@Override
 			public ValidationMode getValidationMode() {
-				return null;
+				return ValidationMode.AUTO;
 			}
 
 			@Override
@@ -123,7 +128,7 @@ public class MinecraftHibernatePeristenceProvider extends HibernatePersistencePr
 
 			@Override
 			public ClassLoader getNewTempClassLoader() {
-				return plugin.getClass().getClassLoader();
+				return new ClassLoader("parent-" + plugin.getName() ,plugin.getClass().getClassLoader()) {	};
 			}
 		};
 	}
