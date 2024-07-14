@@ -17,8 +17,6 @@ public class ConnectionTest {
 	@Before
 	public void generateBeanStore() {
 		DatabaseConfiguration conn = new DatabaseConfiguration();
-		conn.setPassword("Pippo007");
-		conn.setSchema("test");
 		bs = new BeanStore(TestPlugin.getInstance(), conn);
 	}
 	
