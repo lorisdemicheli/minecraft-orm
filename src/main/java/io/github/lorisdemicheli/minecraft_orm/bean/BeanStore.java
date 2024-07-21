@@ -10,6 +10,8 @@ import org.bukkit.plugin.Plugin;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import io.github.lorisdemicheli.minecraft_orm.hibernate.DatabaseConfiguration;
+import io.github.lorisdemicheli.minecraft_orm.hibernate.DatabaseFileUtil;
 import io.github.lorisdemicheli.minecraft_orm.hibernate.PersistenceInjectBean;
 
 public class BeanStore {
