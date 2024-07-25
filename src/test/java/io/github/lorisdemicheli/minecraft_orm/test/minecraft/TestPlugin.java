@@ -1,4 +1,4 @@
-package io.github.lorisdemicheli.minecraft_orm.test;
+package io.github.lorisdemicheli.minecraft_orm.test.minecraft;
 
 import java.io.File;
 import java.io.InputStream;

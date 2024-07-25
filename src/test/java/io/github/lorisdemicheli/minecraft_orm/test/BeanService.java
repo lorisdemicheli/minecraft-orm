@@ -1,33 +1,31 @@
 package io.github.lorisdemicheli.minecraft_orm.test;
 
-import java.util.UUID;
-
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import io.github.lorisdemicheli.minecraft_orm.bean.BeanStore;
 import io.github.lorisdemicheli.minecraft_orm.hibernate.DatabaseConfiguration;
-import io.github.lorisdemicheli.minecraft_orm.test.entity.TestEntity;
+import io.github.lorisdemicheli.minecraft_orm.test.annotation.TestOrder;
+import io.github.lorisdemicheli.minecraft_orm.test.minecraft.TestPlugin;
+import io.github.lorisdemicheli.minecraft_orm.test.util.OrderedRunner;
 
-public class ConnectionTest {
-
-	private BeanStore bs;
+@RunWith(OrderedRunner.class)
+public class BeanService {
+	
+	public static BeanStore beanStore;
 
 	@Test
-	@Before
+	@TestOrder(1)
 	public void generateBeanStore() {
 		DatabaseConfiguration conn = new DatabaseConfiguration();
 		setEnviroment(conn);
+		//conn.setHbm2ddl("create-drop");
 		conn.setDebug(true);
-		bs = new BeanStore(TestPlugin.getInstance(), conn);
+		beanStore = new BeanStore(TestPlugin.getInstance(), conn);
 	}
 	
-	@Test
-	public void saveNewEntity() {
-		TestEntityService tes = bs.getOrCreateBean(TestEntityService.class);
-		TestEntity te = new TestEntity();
-		te.setId(UUID.randomUUID().toString());
-		tes.saveOrUpdate(te);
+	public static BeanStore getBeanStore() {
+		return beanStore;
 	}
 	
 	private void setEnviroment(DatabaseConfiguration conn) {

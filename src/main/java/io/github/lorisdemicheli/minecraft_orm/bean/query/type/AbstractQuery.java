@@ -1,6 +1,7 @@
 package io.github.lorisdemicheli.minecraft_orm.bean.query.type;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 
 import io.github.lorisdemicheli.minecraft_orm.bean.query.QueryType;
 import jakarta.persistence.EntityManager;
@@ -22,4 +23,6 @@ public abstract class AbstractQuery<R extends Serializable,
 	public abstract CQ buildCount(QueryType<R> queryFilter);
 	
 	public abstract HRQ buildHasResult(QueryType<R> queryFilter);
+	
+	public abstract boolean filterValidation(Field field);
 }

@@ -1,9 +1,11 @@
 package io.github.lorisdemicheli.minecraft_orm.bean.query.type;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 
 import io.github.lorisdemicheli.minecraft_orm.bean.query.QueryType;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.CountQuery;
+import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Filter;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.HasResultQuery;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Query;
 import jakarta.persistence.EntityManager;
@@ -34,5 +36,10 @@ public class JpqlQuery<T extends Serializable> extends AbstractQuery<T,
 	public TypedQuery<Boolean> buildHasResult(QueryType<T> queryFilter) {
 		HasResultQuery hasResultQuery = queryFilter.getClass().getAnnotation(HasResultQuery.class);
 		return entityManager.createQuery(hasResultQuery.value(), Boolean.class);
+	}
+	
+	@Override
+	public boolean filterValidation(Field field) {
+		return field.isAnnotationPresent(Filter.class);
 	}
 }

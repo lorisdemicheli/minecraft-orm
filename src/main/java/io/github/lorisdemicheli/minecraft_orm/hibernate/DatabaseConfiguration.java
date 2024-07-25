@@ -16,6 +16,7 @@ public class DatabaseConfiguration implements Serializable {
 	private String password = "root";
 
 	private transient Boolean debug = Boolean.FALSE;
+	private transient String hbm2ddl = "update";
 
 	public Map<String, String> generateProperties() throws IllegalArgumentException {
 		Database databaseTypeConf;
@@ -29,7 +30,7 @@ public class DatabaseConfiguration implements Serializable {
 		properties.put("jakarta.persistence.jdbc.password", password);
 		properties.put("jakarta.persistence.jdbc.driver", databaseTypeConf.getDriver());
 		properties.put("hibernate.dialect", databaseTypeConf.getDialect());
-		properties.put("hibernate.hbm2ddl.auto", "update");
+		properties.put("hibernate.hbm2ddl.auto", hbm2ddl);
 		properties.put("hibernate.connection.autocommit", "true");
 		properties.put("hibernate.show_sql", debug.toString());
 		return properties;
@@ -89,5 +90,13 @@ public class DatabaseConfiguration implements Serializable {
 
 	public void setDebug(Boolean debug) {
 		this.debug = debug;
+	}
+	
+	public String getHbm2ddl() {
+		return hbm2ddl;
+	}
+	
+	public void setHbm2ddl(String hbm2ddl) {
+		this.hbm2ddl = hbm2ddl;
 	}
 }

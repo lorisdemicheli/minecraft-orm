@@ -2,9 +2,15 @@ package io.github.lorisdemicheli.minecraft_orm.bean.query.utils;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 
 import io.github.lorisdemicheli.minecraft_orm.bean.query.Expression;
+import io.github.lorisdemicheli.minecraft_orm.bean.query.QueryType;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Filter;
+import io.github.lorisdemicheli.minecraft_orm.bean.query.type.AbstractQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.ParameterExpression;
 import jakarta.persistence.criteria.Path;
@@ -12,13 +18,39 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.CriteriaBuilder.In;
 
 public class QueryUtils {
-
-	public static Predicate convertField(QueryContext ctx, Field field) {
-		 ParameterExpression<?> parameter = ctx.criteriaBuilder().parameter(field.getType(), field.getName());
-		 Filter filter = field.getAnnotation(Filter.class);
-		return convertExpression(ctx, filter, parameter, aliasPath(ctx, filter.path()));
+	
+	public static String fieldName(Field field) {
+		String name;
+		Filter filter = field.getAnnotation(Filter.class);
+		if(StringUtils.isEmpty(filter.name())) {
+			name = field.getName();
+		} else {
+			name = filter.name();
+		}
+		return name;
 	}
 	
+	@SuppressWarnings("rawtypes")
+	public static List<Field> getParameterFields(AbstractQuery<?,?,?,?> abstractQuery,
+			Class<? extends QueryType> classQuery) {
+		return FieldUtils.getAllFieldsList(classQuery).stream().filter(f->abstractQuery.filterValidation(f)).toList();
+	}
+	
+	public static boolean isParameterActive(QueryType<?> query, Field field) {
+		Filter filter = field.getAnnotation(Filter.class);
+		try {
+			return FieldUtils.readField(field, query, true) != null || !filter.emptyExclude();
+		} catch (IllegalAccessException e) {
+			return false;
+		}
+	}
+
+	public static Predicate convertField(QueryContext ctx, Field field) {
+		ParameterExpression<?> parameter = ctx.criteriaBuilder().parameter(field.getType(), fieldName(field));
+		Filter filter = field.getAnnotation(Filter.class);
+		return convertExpression(ctx, filter, parameter, aliasPath(ctx, filter.path()));
+	}
+
 	public static Path<?> aliasPath(QueryContext ctx, String complexAttribute) {
 		String aliasName = complexAttribute.split("\\.")[0];
 		String other = complexAttribute.substring(complexAttribute.indexOf(".") + 1);
@@ -30,9 +62,10 @@ public class QueryUtils {
 		}
 		return ret;
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static <T> Predicate convertExpression(QueryContext ctx, Filter filter,  ParameterExpression<? extends T> parameter, 
+	private static <T> Predicate convertExpression(QueryContext ctx, Filter filter,
+			ParameterExpression<? extends T> parameter,
 			jakarta.persistence.criteria.Expression<? extends T> fieldValue) {
 		if (isComparable(filter.expression())) {
 			return comparableExpression(ctx.criteriaBuilder(), filter.expression(), filter.negate(), fieldValue,

@@ -95,7 +95,7 @@ public class CriteriaQuery<T extends Serializable>
 		// WHERE
 		List<Predicate> wherePredicate = new ArrayList<>();
 		Map<String, List<Field>> disjunctionMap = new HashMap<>();
-		for (Field conditionField : getConditionFields(queryFilter.getClass())) {
+		for (Field conditionField : QueryUtils.getParameterFields(this,queryFilter.getClass())) {
 			Filter filter = conditionField.getAnnotation(Filter.class);
 			if (readConditionValue(conditionField, queryFilter) != null || !filter.emptyExclude()) {
 				if (StringUtils.isNotEmpty(filter.disjunction())) {
@@ -128,6 +128,15 @@ public class CriteriaQuery<T extends Serializable>
 		criteriaQuery.orderBy(generateOrderBy(ctx, ordersBy));
 
 		return criteriaQuery;
+	}
+	
+	@Override
+	public boolean filterValidation(Field field) {
+		if(!field.isAnnotationPresent(Filter.class)) {
+			return false;
+		}
+		Filter filter = field.getAnnotation(Filter.class);
+		return !StringUtils.isEmpty(filter.path());
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -189,12 +198,7 @@ public class CriteriaQuery<T extends Serializable>
 				return ctx.criteriaBuilder().desc(QueryUtils.aliasPath(ctx, o.value()));
 			}
 		}).toList();
-	}
-
-	@SuppressWarnings("rawtypes")
-	private List<Field> getConditionFields(Class<? extends QueryType> classQuery) {
-		return FieldUtils.getFieldsListWithAnnotation(classQuery, Filter.class);
-	}
+	}	
 
 	@SuppressWarnings("hiding")
 	private <T extends Serializable> Object readConditionValue(Field conditionField, QueryType<T> queryFilter) {
