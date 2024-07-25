@@ -1,6 +1,5 @@
 package io.github.lorisdemicheli.minecraft_orm.bean.query.type;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +28,7 @@ import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
-public class CriteriaQuery<T extends Serializable>
+public class CriteriaQuery<T>
 		extends AbstractQuery<T, TypedQuery<T>, TypedQuery<Long>, TypedQuery<Boolean>> {
 
 	public static final String DEFAULT_ROOT_ALIAS = "root";
@@ -62,7 +61,7 @@ public class CriteriaQuery<T extends Serializable>
 	}
 
 	@SuppressWarnings("hiding")
-	private <R, T extends Serializable> jakarta.persistence.criteria.CriteriaQuery<R> critieraBuilder(
+	private <R, T> jakarta.persistence.criteria.CriteriaQuery<R> critieraBuilder(
 			Class<R> resultClass, QueryType<T> queryFilter) {
 		QueryContext ctx = new QueryContext(entityManager.getCriteriaBuilder(), alias);
 		jakarta.persistence.criteria.CriteriaQuery<R> criteriaQuery = entityManager.getCriteriaBuilder()
@@ -201,7 +200,7 @@ public class CriteriaQuery<T extends Serializable>
 	}	
 
 	@SuppressWarnings("hiding")
-	private <T extends Serializable> Object readConditionValue(Field conditionField, QueryType<T> queryFilter) {
+	private <T> Object readConditionValue(Field conditionField, QueryType<T> queryFilter) {
 		try {
 			return FieldUtils.readField(conditionField, queryFilter, true);
 		} catch (IllegalAccessException e) {

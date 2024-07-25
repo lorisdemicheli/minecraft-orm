@@ -1,6 +1,5 @@
 package io.github.lorisdemicheli.minecraft_orm.bean.query.type;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 
 import org.hibernate.Session;
@@ -11,7 +10,7 @@ import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Filter;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.HasResultQuery;
 import jakarta.persistence.EntityManager;
 
-public class NativeQuery<T extends Serializable> extends AbstractQuery<T,
+public class NativeQuery<T> extends AbstractQuery<T,
 	org.hibernate.query.NativeQuery<T>,
 	org.hibernate.query.NativeQuery<Long>,
 	org.hibernate.query.NativeQuery<Boolean>> {

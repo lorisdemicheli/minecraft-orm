@@ -1,6 +1,5 @@
 package io.github.lorisdemicheli.minecraft_orm.bean.query;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -14,31 +13,31 @@ public class QueryService {
 	@Inject
 	private EntityManager entityManager;
 
-	@SuppressWarnings("unchecked")
-	public <T extends Serializable> List<T> getResultList(QueryType<T> queryFilter) {
+	public <T> List<T> getResultList(QueryType<T> queryFilter) {
 		return new QueryBuilder(entityManager).buildSelect(queryFilter).getResultList();
 	}
 	
-	@SuppressWarnings("unchecked")
-	public <T extends Serializable> T getFirstResult(QueryType<T> queryFilter) {
-		return (T) new QueryBuilder(entityManager).buildSelect(queryFilter).setMaxResults(1).getSingleResult();
+	public <T> T getFirstResult(QueryType<T> queryFilter) {
+		return new QueryBuilder(entityManager).buildSelect(queryFilter).setMaxResults(1).getSingleResult();
 	}
 	
-	@SuppressWarnings("unchecked")
-	public <T extends Serializable> Stream<T> getStreamResult(QueryType<T> queryFilter) {
-		return (Stream<T>) new QueryBuilder(entityManager).buildSelect(queryFilter).getResultStream();
+	public <T> Stream<T> getStreamResult(QueryType<T> queryFilter) {
+		return new QueryBuilder(entityManager).buildSelect(queryFilter).getResultStream();
 	}
 	
-	@SuppressWarnings("unchecked")
-	public <T extends Serializable> T getSingleResult(QueryType<T> queryFilter) {
-		return (T) new QueryBuilder(entityManager).buildSelect(queryFilter).getSingleResult();
+	public <T> T getSingleResult(QueryType<T> queryFilter) {
+		return new QueryBuilder(entityManager).buildSelect(queryFilter).getSingleResult();
 	}
 	
-	public <T extends Serializable> Long count(QueryType<T> queryFilter) {
-		return (Long) new QueryBuilder(entityManager).buildCount(queryFilter).getSingleResult();
+	public <T> Long count(QueryType<T> queryFilter) {
+		return new QueryBuilder(entityManager).buildCount(queryFilter).getSingleResult();
 	}
 	
-	public <T extends Serializable> T getFirstResultIfAny(QueryType<T> queryFilter) {
+	public <T> Boolean hasReqult(QueryType<T> queryFilter) {
+		return new QueryBuilder(entityManager).buildHasResult(queryFilter).getSingleResult();
+	}
+	
+	public <T> T getFirstResultIfAny(QueryType<T> queryFilter) {
 		try {
 			return getFirstResult(queryFilter);
 		} catch (NoResultException e) {
@@ -46,7 +45,7 @@ public class QueryService {
 		}
 	}
 	
-	public <T extends Serializable> T getSingleResultIfAny(QueryType<T> queryFilter) {
+	public <T> T getSingleResultIfAny(QueryType<T> queryFilter) {
 		try {
 			return getSingleResult(queryFilter);
 		} catch (NoResultException e) {

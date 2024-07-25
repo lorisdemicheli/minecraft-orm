@@ -1,13 +1,12 @@
 package io.github.lorisdemicheli.minecraft_orm.bean.query.type;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 
 import io.github.lorisdemicheli.minecraft_orm.bean.query.QueryType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 
-public abstract class AbstractQuery<R extends Serializable,
+public abstract class AbstractQuery<R,
 	Q extends TypedQuery<R>,
 	CQ extends TypedQuery<Long>, 
 	HRQ extends TypedQuery<Boolean>> {
