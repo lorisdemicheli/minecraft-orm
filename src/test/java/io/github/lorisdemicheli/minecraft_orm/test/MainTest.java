@@ -7,7 +7,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 	BeanService.class,
 	EntityServiceTest.class,
-	//QueryTest.class
+	QueryTest.class
 })
 public class MainTest {
 

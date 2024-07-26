@@ -33,7 +33,7 @@ public class QueryService {
 		return new QueryBuilder(entityManager).buildCount(queryFilter).getSingleResult();
 	}
 	
-	public <T> Boolean hasReqult(QueryType<T> queryFilter) {
+	public <T> Boolean hasResult(QueryType<T> queryFilter) {
 		return new QueryBuilder(entityManager).buildHasResult(queryFilter).getSingleResult();
 	}
 	

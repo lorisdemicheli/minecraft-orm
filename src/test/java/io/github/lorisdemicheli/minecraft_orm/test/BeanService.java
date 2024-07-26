@@ -19,7 +19,7 @@ public class BeanService {
 	public void generateBeanStore() {
 		DatabaseConfiguration conn = new DatabaseConfiguration();
 		setEnviroment(conn);
-		//conn.setHbm2ddl("create-drop");
+		conn.setHbm2ddl("create-drop");
 		conn.setDebug(true);
 		beanStore = new BeanStore(TestPlugin.getInstance(), conn);
 	}

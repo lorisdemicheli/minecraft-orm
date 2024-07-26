@@ -1,6 +1,8 @@
 package io.github.lorisdemicheli.minecraft_orm.test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,15 +18,31 @@ import io.github.lorisdemicheli.minecraft_orm.test.util.OrderedRunner;
 public class QueryTest {
 
 	@Test
-	@TestOrder(10)
+	@TestOrder(0)
 	public void testCriteria() {
 		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
 		TestQueryCriteria query = new TestQueryCriteria();
 		assertNotNull(qs.getResultList(query));
 	}
+	
+	@Test
+	@TestOrder(1)
+	public void testCriteriaCount() {
+		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
+		TestQueryCriteria query = new TestQueryCriteria();
+		assertEquals(Long.valueOf(1),qs.count(query));
+	}
+	
+	@Test
+	@TestOrder(2)
+	public void testCriteriaHasReqult() {
+		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
+		TestQueryCriteria query = new TestQueryCriteria();
+		assertTrue(qs.hasResult(query));
+	}
 
 	@Test
-	@TestOrder(11)
+	@TestOrder(3)
 	public void testCriteriaEqual() {
 		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
 		TestQueryCriteria query = new TestQueryCriteria();
@@ -33,7 +51,7 @@ public class QueryTest {
 	}
 	
 	@Test
-	@TestOrder(11)
+	@TestOrder(4)
 	public void testCriteriaLike() {
 		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
 		TestQueryCriteria query = new TestQueryCriteria();
@@ -42,7 +60,7 @@ public class QueryTest {
 	}
 
 	@Test
-	@TestOrder(20)
+	@TestOrder(100)
 	public void testJpql() {
 		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
 		TestQueryJpql query = new TestQueryJpql();
@@ -50,7 +68,23 @@ public class QueryTest {
 	}
 	
 	@Test
-	@TestOrder(21)
+	@TestOrder(101)
+	public void testJpqlCount() {
+		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
+		TestQueryJpql query = new TestQueryJpql();
+		assertEquals(Long.valueOf(1),qs.count(query));
+	}
+	
+	@Test
+	@TestOrder(102)
+	public void testJpqlReqult() {
+		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
+		TestQueryJpql query = new TestQueryJpql();
+		assertTrue(qs.hasResult(query));
+	}
+	
+	@Test
+	@TestOrder(103)
 	public void testJpqlEqual() {
 		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
 		TestQueryJpql query = new TestQueryJpql();
@@ -59,7 +93,7 @@ public class QueryTest {
 	}
 	
 	@Test
-	@TestOrder(22)
+	@TestOrder(104)
 	public void testJpqlLike() {
 		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
 		TestQueryJpql query = new TestQueryJpql();
@@ -68,7 +102,7 @@ public class QueryTest {
 	}
 	
 	@Test
-	@TestOrder(30)
+	@TestOrder(200)
 	public void testNative() {
 		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
 		TestQueryNativeSql query = new TestQueryNativeSql();
@@ -76,7 +110,23 @@ public class QueryTest {
 	}
 	
 	@Test
-	@TestOrder(31)
+	@TestOrder(201)
+	public void testNativeCount() {
+		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
+		TestQueryNativeSql query = new TestQueryNativeSql();
+		assertEquals(Long.valueOf(1),qs.count(query));
+	}
+	
+	@Test
+	@TestOrder(202)
+	public void testNativeReqult() {
+		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
+		TestQueryNativeSql query = new TestQueryNativeSql();
+		assertTrue(qs.hasResult(query));
+	}
+	
+	@Test
+	@TestOrder(203)
 	public void testNativeEqual() {
 		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
 		TestQueryNativeSql query = new TestQueryNativeSql();
@@ -85,7 +135,7 @@ public class QueryTest {
 	}
 	
 	@Test
-	@TestOrder(32)
+	@TestOrder(204)
 	public void testNativeLike() {
 		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
 		TestQueryNativeSql query = new TestQueryNativeSql();
