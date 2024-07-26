@@ -11,9 +11,9 @@ import io.github.lorisdemicheli.minecraft_orm.test.entity.TestEntity;
 @OrderBy("te.id")
 public class TestQueryCriteria implements QueryType<TestEntity> {
 	
-	@Filter(path = "te.id",expression = Expression.EQUAL, emptyExclude = true)
+	@Filter(path = "te.id",expression = Expression.EQUAL, emptyOrNullExclude = true)
 	private Long id;
-	@Filter(path = "te.description", expression = Expression.LIKE, emptyExclude = true)
+	@Filter(path = "te.description", expression = Expression.LIKE, emptyOrNullExclude = true)
 	private String descriptionLike;
 
 	@Override

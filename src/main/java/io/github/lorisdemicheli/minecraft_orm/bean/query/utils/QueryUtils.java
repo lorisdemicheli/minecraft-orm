@@ -10,6 +10,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.Expression;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.QueryType;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Filter;
+import io.github.lorisdemicheli.minecraft_orm.bean.query.exception.ParameterException;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.type.AbstractQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.ParameterExpression;
@@ -39,9 +40,15 @@ public class QueryUtils {
 	public static boolean isParameterActive(QueryType<?> query, Field field) {
 		Filter filter = field.getAnnotation(Filter.class);
 		try {
-			return FieldUtils.readField(field, query, true) != null || !filter.emptyExclude();
+			Object value = FieldUtils.readField(field, query, true);
+			boolean isCollectionValid = true;
+			if(value != null && value instanceof Collection<?>) {
+				Collection<?> collection = (Collection<?>) value;
+				isCollectionValid = !collection.isEmpty();
+			}
+			return (value != null && isCollectionValid) || !filter.emptyOrNullExclude();
 		} catch (IllegalAccessException e) {
-			return false;
+			throw new ParameterException(String.format("Unable to read value of %s",field.getName()),e);
 		}
 	}
 

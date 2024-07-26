@@ -15,6 +15,6 @@ public @interface Filter {
 	String path() default "";
 	Expression expression() default Expression.EQUAL;
 	boolean negate() default false;
-	boolean emptyExclude() default false;
+	boolean emptyOrNullExclude() default false;
 	String disjunction() default "";
 }

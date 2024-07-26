@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
 
 import io.github.lorisdemicheli.minecraft_orm.bean.query.QueryType;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Alias;
@@ -59,6 +58,15 @@ public class CriteriaQuery<T>
 				entityManager.getCriteriaBuilder().count(alias.get(getRootAlias(queryFilter.getClass()))), 0L));
 		return entityManager.createQuery(critieraQuery);
 	}
+	
+	@Override
+	public boolean filterValidation(Field field) {
+		if(!field.isAnnotationPresent(Filter.class)) {
+			return false;
+		}
+		Filter filter = field.getAnnotation(Filter.class);
+		return !StringUtils.isEmpty(filter.path());
+	}
 
 	@SuppressWarnings("hiding")
 	private <R, T> jakarta.persistence.criteria.CriteriaQuery<R> critieraBuilder(
@@ -96,7 +104,7 @@ public class CriteriaQuery<T>
 		Map<String, List<Field>> disjunctionMap = new HashMap<>();
 		for (Field conditionField : QueryUtils.getParameterFields(this,queryFilter.getClass())) {
 			Filter filter = conditionField.getAnnotation(Filter.class);
-			if (readConditionValue(conditionField, queryFilter) != null || !filter.emptyExclude()) {
+			if (QueryUtils.isParameterActive(queryFilter, conditionField)) {
 				if (StringUtils.isNotEmpty(filter.disjunction())) {
 					disjunctionMap.getOrDefault(filter.disjunction(), new ArrayList<>()).add(conditionField);
 				} else {
@@ -127,15 +135,6 @@ public class CriteriaQuery<T>
 		criteriaQuery.orderBy(generateOrderBy(ctx, ordersBy));
 
 		return criteriaQuery;
-	}
-	
-	@Override
-	public boolean filterValidation(Field field) {
-		if(!field.isAnnotationPresent(Filter.class)) {
-			return false;
-		}
-		Filter filter = field.getAnnotation(Filter.class);
-		return !StringUtils.isEmpty(filter.path());
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -198,13 +197,4 @@ public class CriteriaQuery<T>
 			}
 		}).toList();
 	}	
-
-	@SuppressWarnings("hiding")
-	private <T> Object readConditionValue(Field conditionField, QueryType<T> queryFilter) {
-		try {
-			return FieldUtils.readField(conditionField, queryFilter, true);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(String.format("Unable to read field %s", conditionField.getName()));
-		}
-	}
 }
