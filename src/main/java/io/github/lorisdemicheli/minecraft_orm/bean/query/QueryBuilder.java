@@ -1,10 +1,14 @@
 package io.github.lorisdemicheli.minecraft_orm.bean.query;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.CountQuery;
+import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Fetch;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.HasResultQuery;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.exception.ParameterException;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.type.AbstractQuery;
@@ -12,7 +16,9 @@ import io.github.lorisdemicheli.minecraft_orm.bean.query.type.CriteriaQuery;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.type.JpqlQuery;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.type.NativeQuery;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.utils.QueryUtils;
+import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Graph;
 import jakarta.persistence.TypedQuery;
 
 public class QueryBuilder {
@@ -38,6 +44,9 @@ public class QueryBuilder {
 		}
 		TypedQuery<T> query = abstractQuery.buildSelect(queryFilter);
 		setParameters(query, abstractQuery, queryFilter);
+		if(abstractQuery.canFetch()) {
+			setFetch(query, queryFilter); //org.hibernate.graph.internal.RootGraphImpl Not yet implemented after this uncomment
+		}
 		return query;
 	}
 	
@@ -75,7 +84,39 @@ public class QueryBuilder {
 		return query;
 	}
 	
-	private <T> void setParameters(TypedQuery<?> query, 
+	private <T> void setFetch(TypedQuery<?> query, QueryType<T> queryFilter) {
+		EntityGraph<T> entityGraph = em.createEntityGraph(queryFilter.getType());
+		for(Fetch fetch : getFetchs(queryFilter.getClass())) {
+			String aliasName = fetch.path().split("\\.")[0];
+			String other = fetch.path().substring(fetch.path().indexOf(".") + 1);
+			Graph<?> graph = entityGraph;
+			while (!aliasName.equals(other)) {
+				aliasName = other.split("\\.")[0];
+				other = other.substring(other.indexOf("\\.") + 1);
+				if(aliasName.equals(other)) {
+					graph.addAttributeNode(other);
+				} else {
+					graph = graph.addSubgraph(aliasName);
+				}
+			}
+		}
+		query.setHint("jakarta.persistence.fetchgraph", entityGraph);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private List<Fetch> getFetchs(Class<? extends QueryType> classQuery) {
+		Fetch.List fetchList = classQuery.getAnnotation(Fetch.List.class);
+		Fetch fetchSingle = classQuery.getAnnotation(Fetch.class);
+		List<Fetch> fetchs = new ArrayList<>();
+		if (fetchList != null) {
+			fetchs.addAll(Arrays.asList(fetchList.fetchs()));
+		} else if (fetchSingle != null) {
+			fetchs.add(fetchSingle);
+		}
+		return fetchs;
+	}
+	
+	private void setParameters(TypedQuery<?> query, 
 			AbstractQuery<?,?,?,?> abstractQuery, QueryType<?> queryFilter) {
 		for(Field field : QueryUtils.getParameterFields(abstractQuery, queryFilter.getClass())) {
 			try {

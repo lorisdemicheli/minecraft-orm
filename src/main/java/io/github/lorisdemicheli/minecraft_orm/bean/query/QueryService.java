@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
 
 public class QueryService {
 	
@@ -35,6 +36,18 @@ public class QueryService {
 	
 	public <T> Boolean hasResult(QueryType<T> queryFilter) {
 		return new QueryBuilder(entityManager).buildHasResult(queryFilter).getSingleResult();
+	}
+	
+	public <T> Page<T> getPagedResultList(QueryType<T> queryFilter, int pageNumber, int pageSize) {
+		TypedQuery<T> query = new QueryBuilder(entityManager).buildSelect(queryFilter);
+		query.setMaxResults(pageSize);
+		query.setFirstResult(pageNumber * pageSize);
+		Long totalElement = count(queryFilter);
+		int tempSize =  (int) (totalElement / pageSize);
+		if(totalElement % pageSize != 0) {
+			tempSize++;
+		}
+		return new Page<T>(query.getResultList(), tempSize, pageNumber, totalElement);
 	}
 	
 	public <T> T getFirstResultIfAny(QueryType<T> queryFilter) {

@@ -45,4 +45,9 @@ public class NativeQuery<T> extends AbstractQuery<T,
 	public boolean filterValidation(Field field) {
 		return field.isAnnotationPresent(Filter.class);
 	}
+
+	@Override
+	public boolean canFetch() {
+		return false;
+	}
 }

@@ -3,12 +3,16 @@ package io.github.lorisdemicheli.minecraft_orm.test.query;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.Expression;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.QueryType;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Alias;
+import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Fetch;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Filter;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.OrderBy;
 import io.github.lorisdemicheli.minecraft_orm.test.entity.TestEntity;
 
 @Alias("te")
 @OrderBy("te.id")
+@Fetch.List(fetchs = {
+		@Fetch(path = "te.second")
+})
 public class TestQueryCriteria implements QueryType<TestEntity> {
 	
 	@Filter(path = "te.id",expression = Expression.EQUAL, emptyOrNullExclude = true)

@@ -11,7 +11,6 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.StringUtils;
 
 import io.github.lorisdemicheli.minecraft_orm.bean.query.QueryType;
-import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Alias;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Distinct;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Filter;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.GroupBy;
@@ -30,7 +29,6 @@ import jakarta.persistence.criteria.Root;
 public class CriteriaQuery<T>
 		extends AbstractQuery<T, TypedQuery<T>, TypedQuery<Long>, TypedQuery<Boolean>> {
 
-	public static final String DEFAULT_ROOT_ALIAS = "root";
 	private Map<String, From<?, ?>> alias;
 
 	public CriteriaQuery(EntityManager entityManager) {
@@ -47,7 +45,7 @@ public class CriteriaQuery<T>
 	@Override
 	public TypedQuery<Long> buildCount(QueryType<T> queryFilter) {
 		jakarta.persistence.criteria.CriteriaQuery<Long> critieraQuery = critieraBuilder(Long.class, queryFilter);
-		critieraQuery.select(entityManager.getCriteriaBuilder().count(alias.get(getRootAlias(queryFilter.getClass()))));
+		critieraQuery.select(entityManager.getCriteriaBuilder().count(alias.get(QueryUtils.getRootAlias(queryFilter.getClass()))));
 		return entityManager.createQuery(critieraQuery);
 	}
 
@@ -55,7 +53,7 @@ public class CriteriaQuery<T>
 	public TypedQuery<Boolean> buildHasResult(QueryType<T> queryFilter) {
 		jakarta.persistence.criteria.CriteriaQuery<Boolean> critieraQuery = critieraBuilder(Boolean.class, queryFilter);
 		critieraQuery.select(entityManager.getCriteriaBuilder().greaterThan(
-				entityManager.getCriteriaBuilder().count(alias.get(getRootAlias(queryFilter.getClass()))), 0L));
+				entityManager.getCriteriaBuilder().count(alias.get(QueryUtils.getRootAlias(queryFilter.getClass()))), 0L));
 		return entityManager.createQuery(critieraQuery);
 	}
 	
@@ -67,6 +65,11 @@ public class CriteriaQuery<T>
 		Filter filter = field.getAnnotation(Filter.class);
 		return !StringUtils.isEmpty(filter.path());
 	}
+	
+	@Override
+	public boolean canFetch() {
+		return true;
+	}	
 
 	@SuppressWarnings("hiding")
 	private <R, T> jakarta.persistence.criteria.CriteriaQuery<R> critieraBuilder(
@@ -77,7 +80,7 @@ public class CriteriaQuery<T>
 		Root<T> itemRoot = criteriaQuery.from(queryFilter.getType());
 
 		// ROOT
-		String rootAlias = getRootAlias(queryFilter.getClass());
+		String rootAlias = QueryUtils.getRootAlias(queryFilter.getClass());
 		alias.put(rootAlias, itemRoot);
 		itemRoot.alias(rootAlias);
 
@@ -138,18 +141,6 @@ public class CriteriaQuery<T>
 	}
 
 	@SuppressWarnings("rawtypes")
-	private String getRootAlias(Class<? extends QueryType> classQuery) {
-		String rootAlias;
-		Alias rootAliasAnnotation = classQuery.getAnnotation(Alias.class);
-		if (rootAliasAnnotation != null) {
-			rootAlias = rootAliasAnnotation.value();
-		} else {
-			rootAlias = DEFAULT_ROOT_ALIAS;
-		}
-		return rootAlias;
-	}
-
-	@SuppressWarnings("rawtypes")
 	private List<Join> getJoins(Class<? extends QueryType> classQuery) {
 		Join.List joinList = classQuery.getAnnotation(Join.List.class);
 		Join joinSingle = classQuery.getAnnotation(Join.class);
@@ -196,5 +187,5 @@ public class CriteriaQuery<T>
 				return ctx.criteriaBuilder().desc(QueryUtils.aliasPath(ctx, o.value()));
 			}
 		}).toList();
-	}	
+	}
 }

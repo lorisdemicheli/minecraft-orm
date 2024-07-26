@@ -24,4 +24,6 @@ public abstract class AbstractQuery<R,
 	public abstract HRQ buildHasResult(QueryType<R> queryFilter);
 	
 	public abstract boolean filterValidation(Field field);
+	
+	public abstract boolean canFetch();
 }

@@ -2,6 +2,7 @@ package io.github.lorisdemicheli.minecraft_orm.test.query;
 
 import io.github.lorisdemicheli.minecraft_orm.bean.query.QueryType;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.CountQuery;
+import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Fetch;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Filter;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.HasResultQuery;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Query;
@@ -19,6 +20,9 @@ import io.github.lorisdemicheli.minecraft_orm.test.entity.TestEntity;
 		"WHERE (te.id = :id OR :id IS NULL) " + //
 		"AND (te.description = :description OR :description IS NULL) ", //
 		nativeSql = false)
+@Fetch.List(fetchs = {
+		@Fetch(path = "root.second")
+})
 public class TestQueryJpql implements QueryType<TestEntity> {
 
 	@Filter(name = "id")

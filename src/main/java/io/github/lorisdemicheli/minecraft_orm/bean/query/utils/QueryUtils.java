@@ -9,6 +9,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 
 import io.github.lorisdemicheli.minecraft_orm.bean.query.Expression;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.QueryType;
+import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Alias;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Filter;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.exception.ParameterException;
 import io.github.lorisdemicheli.minecraft_orm.bean.query.type.AbstractQuery;
@@ -19,6 +20,8 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.CriteriaBuilder.In;
 
 public class QueryUtils {
+	
+	public static final String DEFAULT_ROOT_ALIAS = "root";
 	
 	public static String fieldName(Field field) {
 		String name;
@@ -68,6 +71,18 @@ public class QueryUtils {
 			ret = ret.get(aliasName);
 		}
 		return ret;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static String getRootAlias(Class<? extends QueryType> classQuery) {
+		String rootAlias;
+		Alias rootAliasAnnotation = classQuery.getAnnotation(Alias.class);
+		if (rootAliasAnnotation != null) {
+			rootAlias = rootAliasAnnotation.value();
+		} else {
+			rootAlias = DEFAULT_ROOT_ALIAS;
+		}
+		return rootAlias;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
