@@ -48,6 +48,22 @@ public class QueryTest {
 		TestQueryCriteria query = new TestQueryCriteria();
 		assertEquals(1,qs.getPagedResultList(query,0,10).size());
 	}
+	
+	@Test
+	@TestOrder(4)
+	public void testCriteriaSingle() {
+		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
+		TestQueryCriteria query = new TestQueryCriteria();
+		assertNotNull(qs.getSingleResult(query));
+	}
+	
+	@Test
+	@TestOrder(5)
+	public void testCriteriaFirst() {
+		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
+		TestQueryCriteria query = new TestQueryCriteria();
+		assertNotNull(qs.getFirstResult(query));
+	}
 
 	@Test
 	@TestOrder(10)
@@ -100,6 +116,22 @@ public class QueryTest {
 	}
 	
 	@Test
+	@TestOrder(104)
+	public void  testJpqlaSingle() {
+		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
+		TestQueryJpql query = new TestQueryJpql();
+		assertNotNull(qs.getSingleResult(query));
+	}
+	
+	@Test
+	@TestOrder(105)
+	public void testJpqlFirst() {
+		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
+		TestQueryJpql query = new TestQueryJpql();
+		assertNotNull(qs.getFirstResult(query));
+	}
+	
+	@Test
 	@TestOrder(110)
 	public void testJpqlEqual() {
 		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
@@ -147,6 +179,22 @@ public class QueryTest {
 		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
 		TestQueryNativeSql query = new TestQueryNativeSql();
 		assertEquals(1,qs.getPagedResultList(query,0,10).size());
+	}
+	
+	@Test
+	@TestOrder(204)
+	public void  testNativeSingle() {
+		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
+		TestQueryNativeSql query = new TestQueryNativeSql();
+		assertNotNull(qs.getSingleResult(query));
+	}
+	
+	@Test
+	@TestOrder(205)
+	public void testNativeFirst() {
+		QueryService qs = BeanService.getBeanStore().getOrCreateBean(QueryService.class);
+		TestQueryNativeSql query = new TestQueryNativeSql();
+		assertNotNull(qs.getFirstResult(query));
 	}
 	
 	@Test

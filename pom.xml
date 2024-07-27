@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.lorisdemicheli</groupId>
 	<artifactId>minecraft-orm</artifactId>
-	<version>1.0.1</version>
+	<version>1.1.0</version>
 	<description>Orm for minecraft for save data easily on database</description>
 	<name>Minecraft-orm</name>
 	<packaging>jar</packaging>

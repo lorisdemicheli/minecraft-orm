@@ -29,7 +29,7 @@ public class QueryBuilder {
 		this.em = em;
 	}
 
-	public <T> TypedQuery<T> buildSelect(QueryType<T> queryFilter) {
+	public <T> TypedQuery<T> buildSelect(QueryType<T> queryFilter, boolean fetch) {
 		AbstractQuery<T,? extends TypedQuery<T>,? extends TypedQuery<Long>,? extends TypedQuery<Boolean>> abstractQuery;
 		io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Query stringQuery = 
 				queryFilter.getClass().getAnnotation(io.github.lorisdemicheli.minecraft_orm.bean.query.annotation.Query.class);
@@ -44,7 +44,7 @@ public class QueryBuilder {
 		}
 		TypedQuery<T> query = abstractQuery.buildSelect(queryFilter);
 		setParameters(query, abstractQuery, queryFilter);
-		if(abstractQuery.canFetch()) {
+		if(abstractQuery.canFetch() && fetch) {
 			setFetch(query, queryFilter); //org.hibernate.graph.internal.RootGraphImpl Not yet implemented after this uncomment
 		}
 		return query;
