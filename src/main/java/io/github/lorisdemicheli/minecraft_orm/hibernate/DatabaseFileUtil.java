@@ -1,4 +1,4 @@
-package io.github.lorisdemicheli.minecraft_orm.bean;
+package io.github.lorisdemicheli.minecraft_orm.hibernate;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,6 +12,7 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.nodes.Tag;
 
 
@@ -31,6 +32,7 @@ public class DatabaseFileUtil {
         representer.addClassTag(DatabaseConfiguration.class, Tag.MAP);
 
         Yaml yaml = new Yaml(constructor, representer, yamlDumperOptions, yamlLoaderOptions);
+        yaml.setBeanAccess(BeanAccess.FIELD);
 		if (!configPlugin.exists()) {
 			plugin.getDataFolder().mkdirs();
 			try {

@@ -130,6 +130,18 @@ public class MinecraftHibernatePeristenceProvider extends HibernatePersistencePr
 			public ClassLoader getNewTempClassLoader() {
 				return new ClassLoader("parent-" + plugin.getName() ,plugin.getClass().getClassLoader()) {	};
 			}
+
+			@Override
+			public String getScopeAnnotationName() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public List<String> getQualifierAnnotationNames() {
+				// TODO Auto-generated method stub
+				return null;
+			}
 		};
 	}
 	

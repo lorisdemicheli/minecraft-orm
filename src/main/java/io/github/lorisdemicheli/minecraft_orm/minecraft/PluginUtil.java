@@ -1,4 +1,4 @@
-package io.github.lorisdemicheli.minecraft_orm.server;
+package io.github.lorisdemicheli.minecraft_orm.minecraft;
 
 import java.util.stream.Stream;
 

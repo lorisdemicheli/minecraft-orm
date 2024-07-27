@@ -1,11 +1,11 @@
-package io.github.lorisdemicheli.minecraft_orm.bean;
+package io.github.lorisdemicheli.minecraft_orm.minecraft;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.plugin.Plugin;
 
-import io.github.lorisdemicheli.minecraft_orm.server.PluginUtil;
+import io.github.lorisdemicheli.minecraft_orm.bean.BeanStore;
 
 public class PluginBean {
 

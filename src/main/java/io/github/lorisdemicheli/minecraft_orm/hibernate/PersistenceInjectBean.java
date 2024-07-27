@@ -8,7 +8,6 @@ import com.google.inject.persist.PersistService;
 import com.google.inject.persist.jpa.JpaPersistModule;
 import com.google.inject.persist.jpa.JpaPersistOptions;
 
-import io.github.lorisdemicheli.minecraft_orm.bean.DatabaseConfiguration;
 import jakarta.persistence.spi.PersistenceProviderResolver;
 import jakarta.persistence.spi.PersistenceProviderResolverHolder;
 

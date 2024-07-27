@@ -1,4 +1,4 @@
-package io.github.lorisdemicheli.minecraft_orm.test;
+package io.github.lorisdemicheli.minecraft_orm.test.service;
 
 import java.util.List;
 
@@ -8,19 +8,19 @@ import com.google.inject.persist.Transactional;
 import io.github.lorisdemicheli.minecraft_orm.test.entity.TestEntity;
 import jakarta.persistence.EntityManager;
 
-public class TestEntityService {
+public class EntityService {
 
 	@Inject
 	private EntityManager em;
 	
-	public TestEntity getTestEntity(String uuid) {
-		TestEntity te = em.find(TestEntity.class, uuid);
+	public TestEntity getTestEntity(Long id) {
+		TestEntity te = em.find(TestEntity.class, id);
 		return te;
 	}
 	
 	@Transactional
 	public TestEntity saveOrUpdate(TestEntity testEntity) {
-		if(getTestEntity(testEntity.getId()) != null) {
+		if(testEntity.getId() != null) {
 			testEntity = em.merge(testEntity);
 		} else {
 			em.persist(testEntity);
